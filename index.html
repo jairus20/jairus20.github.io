@@ -4,17 +4,23 @@
   <meta charset="UTF-8">
   <title>Filtro de Círculos de Investigación</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
+    body { 
+      font-family: Arial, sans-serif; 
+      padding: 20px;
+      background: #f9f9f9;
+    }
     h1 { text-align: center; }
-    .filters { margin-bottom: 20px; text-align: center; }
-    .filter-button {
+    .filter-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    select {
       padding: 10px 15px;
-      margin: 5px;
-      background: #0073e6;
-      color: #fff;
-      border: none;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      outline: none;
       cursor: pointer;
-      border-radius: 3px;
     }
     .grid {
       display: flex;
@@ -23,12 +29,17 @@
       justify-content: center;
     }
     .grid-item {
-      background: #f2f2f2;
+      background: #fff;
       padding: 15px;
       border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       flex: 1 1 calc(33.333% - 10px);
       box-sizing: border-box;
       max-width: 300px;
+      transition: transform 0.3s ease;
+    }
+    .grid-item:hover {
+      transform: scale(1.03);
     }
     @media (max-width: 768px) {
       .grid-item { flex: 1 1 calc(50% - 10px); }
@@ -41,57 +52,60 @@
 <body>
   <h1>Filtro de Círculos de Investigación</h1>
   
-  <!-- Botones de filtro -->
-  <div class="filters">
-    <button class="filter-button" data-filter="*">Todos</button>
-    <button class="filter-button" data-filter=".Arquitectura">Arquitectura</button>
-    <button class="filter-button" data-filter=".IngAmbiental">Ing. Ambiental</button>
-    <button class="filter-button" data-filter=".IngCivil">Ing. Civil</button>
-    <button class="filter-button" data-filter=".IngSistemas">Ing. de Sistemas</button>
-    <button class="filter-button" data-filter=".IngIndustrial">Ing. Industrial</button>
-    <button class="filter-button" data-filter=".UIFIA">UI-FIA</button>
+  <!-- Menú desplegable para seleccionar escuela -->
+  <div class="filter-container">
+    <select id="schoolFilter">
+      <option value="*">Todos</option>
+      <option value=".Arquitectura">Arquitectura</option>
+      <option value=".IngAmbiental">Ing. Ambiental</option>
+      <option value=".IngCivil">Ing. Civil</option>
+      <option value=".IngSistemas">Ing. de Sistemas</option>
+      <option value=".IngIndustrial">Ing. Industrial</option>
+      <option value=".UIFIA">UI-FIA</option>
+    </select>
   </div>
   
-  <!-- Contenedor para las cards -->
+  <!-- Contenedor donde se generarán las tarjetas -->
   <div class="grid" id="grid">
-    <!-- Las tarjetas se generarán dinámicamente -->
+    <!-- Las tarjetas se agregarán dinámicamente -->
   </div>
   
-  <!-- Incluir Isotope para el filtrado -->
+  <!-- Librería Isotope para el filtrado -->
   <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
-  <!-- Incluir Tabletop.js para conectar con Google Sheets -->
+  <!-- Librería Tabletop.js para conectar con Google Sheets -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tabletop.js/1.5.4/tabletop.min.js"></script>
   
   <script>
-    // Función para normalizar el nombre de la escuela y usarlo como clase (sin espacios ni caracteres especiales)
+    // Función para normalizar el nombre de la escuela (sin espacios ni caracteres especiales)
     function normalizeClass(name) {
-      return name.replace(/\s+/g, '').replace(/\./g, '').replace(/-/g, '');
+      return name.replace(/\s+/g, '').replace(/[^\w]/g, '');
     }
 
-    // Función para crear una "card" con los datos de cada registro
+    // Función para crear una tarjeta (card) a partir de los datos
     function createCard(data) {
-      // Se asume que tu hoja tiene columnas: Nro, CENTRO/GRUPO, CÍRCULO de Investigación, Escuela, Tipo, S/ POI 2025 y Estado.
+      // Se asume que en la hoja los encabezados son:
+      // "Nro", "CENTRO/GRUPO", "CÍRCULO de Investigación", "Escuela", "Tipo", "S/ POI 2025" y "Estado".
       var schoolClass = normalizeClass(data.Escuela);
       var card = document.createElement('div');
       card.classList.add('grid-item');
       card.classList.add(schoolClass);
       
-      // Título: Puedes elegir mostrar el nombre del "CÍRCULO de Investigación" o del "CENTRO/GRUPO"
+      // Título: muestra el nombre del círculo o centro
       var title = document.createElement('h3');
       title.textContent = data["CÍRCULO de Investigación"] || data["CENTRO/GRUPO"];
       card.appendChild(title);
       
-      // Muestra la Escuela
+      // Mostrar la escuela
       var school = document.createElement('p');
       school.textContent = "Escuela: " + data.Escuela;
       card.appendChild(school);
       
-      // Muestra el Tipo
+      // Mostrar el tipo
       var type = document.createElement('p');
       type.textContent = "Tipo: " + data.Tipo;
       card.appendChild(type);
       
-      // Muestra el Estado
+      // Mostrar el estado
       var state = document.createElement('p');
       state.textContent = "Estado: " + data.Estado;
       card.appendChild(state);
@@ -99,31 +113,30 @@
       return card;
     }
 
-    // URL pública de la hoja de cálculo (asegúrate de publicarla en la web)
+    // URL pública de la hoja de cálculo (asegúrate de que esté publicada)
     var publicSpreadsheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRyQ9BRY65TPYHtsY0t9rZPWP88KSeSZ_vNAqnu1jWGa7QV0k4bWDpmScpWGa3SFXDvbEugZO-FUeWD/pubhtml';
 
     function init() {
       Tabletop.init({
         key: publicSpreadsheetUrl,
-        callback: function(data, tabletop) {
+        callback: function(data) {
           var grid = document.getElementById('grid');
-          // Recorre cada fila de la hoja y crea una card
+          // Crear una tarjeta por cada registro
           data.forEach(function(row) {
             var card = createCard(row);
             grid.appendChild(card);
           });
           
-          // Inicializa Isotope para el filtrado de la cuadrícula
+          // Inicializar Isotope para la cuadrícula
           var iso = new Isotope('.grid', {
             itemSelector: '.grid-item',
             layoutMode: 'fitRows'
           });
           
-          // Asigna eventos a los botones de filtro
-          var filtersElem = document.querySelector('.filters');
-          filtersElem.addEventListener('click', function(event) {
-            if (!event.target.matches('.filter-button')) return;
-            var filterValue = event.target.getAttribute('data-filter');
+          // Evento para el menú desplegable
+          var schoolFilter = document.getElementById('schoolFilter');
+          schoolFilter.addEventListener('change', function() {
+            var filterValue = this.value;
             iso.arrange({ filter: filterValue });
           });
         },
