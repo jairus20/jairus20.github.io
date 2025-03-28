@@ -3,10 +3,15 @@
 :root {
     --padding-container: 100px 0;
     --color-title: #001A49;
+    --pokemon-yellow: #fbd743;
+    --pokemon-dark-yellow: #c7a008;
+    --pokemon-light-yellow: #fff4b5;
+    --pokemon-blue: #3c5aa6;
 }
 
 body {
     font-family: 'Poppins', sans-serif;
+    background-color: var(--pokemon-light-yellow);
 }
 
 .container {
@@ -26,6 +31,7 @@ body {
     display: grid;
     grid-template-rows: 100px 1fr;
     color: #fff;
+    background: linear-gradient(to bottom, var(--pokemon-yellow), var(--pokemon-light-yellow));
 }
 
 .hero::before {
@@ -53,6 +59,8 @@ body {
 
 .nav__title {
     font-weight: 300;
+    color: var(--pokemon-blue);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .nav__link {
@@ -71,6 +79,12 @@ body {
 .nav__links {
     color: #fff;
     text-decoration: none;
+    color: var(--pokemon-blue);
+    font-weight: bold;
+}
+
+.nav__links:hover {
+    color: var(--pokemon-dark-yellow);
 }
 
 .nav__menu {
@@ -119,6 +133,15 @@ body {
     text-decoration: none;
     padding: 13px 30px;
     border-radius: 32px;
+    background-color: var(--pokemon-blue);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.cta:hover {
+    background-color: var(--pokemon-yellow);
+    color: var(--pokemon-blue);
+    border-color: var(--pokemon-blue);
 }
 
 /* About */
@@ -131,6 +154,7 @@ body {
     color: var(--color-title);
     font-size: 2rem;
     margin-bottom: 25px;
+    color: var(--pokemon-blue);
 }
 
 
@@ -230,6 +254,8 @@ body {
     --bg-cta: #9F3919;
     --color-cta: #FFF;
     --color-items: #fff;
+    background-color: var(--pokemon-yellow);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 
@@ -332,6 +358,9 @@ body {
     gap: 2em;
     padding-top: 50px;
     padding-bottom: 100px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .questions__padding{
@@ -339,6 +368,7 @@ body {
     transition: padding .3s;
     border: 1px solid #5454D4;
     border-radius: 6px;
+    border-bottom: 2px solid var(--pokemon-light-yellow);
 }
 
 .questions__padding--add{
@@ -397,6 +427,7 @@ body {
 
 .footer{
     background-color: #1D293F;
+    background-color: var(--pokemon-blue);
 }
 
 .footer__title{
@@ -462,6 +493,15 @@ body {
     color: #fff;
     border-radius: 6px;
     cursor: pointer;
+    background-color: var(--pokemon-yellow);
+    color: var(--pokemon-blue);
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.footer__submit:hover {
+    background-color: var(--pokemon-dark-yellow);
+    color: white;
 }
 
 .footer__copy{
